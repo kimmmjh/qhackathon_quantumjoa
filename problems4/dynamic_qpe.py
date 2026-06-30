@@ -1,11 +1,9 @@
-"""Quantum phase estimation following arXiv:1910.11696 (Mohammadbagherpoor et al.).
+"""Quantum phase estimation (arXiv:1910.11696).
 
-Implements:
-- Kitaev's algorithm (I / S ancilla prep + classical atan2 post-processing)
-- Iterative QPE (Table I; Griffiths–Niu feed-forward) — single ancilla, dynamic
-- Lloyd QPE (inverse QFT on n ancillas)
-- Modified Lloyd / ACP: semi-classical IQFT (`if_test` replaces controlled-Rz)
-- ACP iterative QPE (constant precision: only R2/R3 look-back)
+Lloyd QPE (n ancillas + inverse QFT) and modified Lloyd (semi-classical IQFT).
+
+Also includes iterative / ACP / Kitaev helpers for Hamiltonian evolution gates
+(not used by the Lloyd comparison notebook).
 """
 
 from __future__ import annotations
@@ -267,7 +265,7 @@ def _build_lloyd_qpe(
     q_anc = QuantumRegister(n_bits, "anc")
     q_sys = QuantumRegister(n_sys, "sys")
     c_bits = ClassicalRegister(n_bits, "phase")
-    qc = QuantumCircuit(q_anc, q_sys, c_bits, name=f"IQPE_lloyd_{tag}")
+    qc = QuantumCircuit(q_anc, q_sys, c_bits, name=f"QPE_lloyd_{tag}")
 
     state_prep(qc, q_sys)
     qc.h(q_anc)
@@ -285,8 +283,30 @@ def _build_lloyd_qpe(
 
 
 # ---------------------------------------------------------------------------
-# Paper demo circuits (φ = 11/16, |1⟩)
+# Phase-oracle Lloyd QPE (notebook demo)
 # ---------------------------------------------------------------------------
+
+
+def build_lloyd_phase_qpe_circuit(
+    n_bits: int,
+    *,
+    method: str,
+    phi: float,
+) -> QuantumCircuit:
+    """
+    Lloyd QPE on eigenstate |1⟩ with a 1-qubit phase oracle U|1⟩ = e^{2πiφ}|1⟩.
+
+    method: ``lloyd`` (unitary IQFT) or ``lloyd_semclassical`` (dynamic IQFT).
+    """
+    u = build_phase_oracle_gate(phi)
+    semclassical = method == "lloyd_semclassical"
+    if method not in ("lloyd", "lloyd_semclassical"):
+        raise ValueError(
+            f"Unknown method: {method!r} (expected 'lloyd' or 'lloyd_semclassical')"
+        )
+    return _build_lloyd_qpe(
+        u, n_bits, 1, state_prep=prepare_eigenstate_one, semclassical=semclassical
+    )
 
 
 def build_paper_demo_circuit(
@@ -295,46 +315,8 @@ def build_paper_demo_circuit(
     method: str,
     phi: float,
 ) -> QuantumCircuit:
-    """
-    Phase-oracle QPE on eigenstate |1⟩ (demo helper for notebooks).
-
-    method: ``kitaev_I``, ``kitaev_S``, ``iterative``, ``acp``,
-            ``lloyd``, ``lloyd_semclassical``
-    """
-    u = build_phase_oracle_gate(phi)
-    if method == "kitaev_I":
-        return _build_kitaev_round(u, n_bits, k_op="I")
-    if method == "kitaev_S":
-        return _build_kitaev_round(u, n_bits, k_op="S")
-    if method == "iterative":
-        return _build_iterative_single_ancilla(
-            u,
-            n_bits,
-            1,
-            state_prep=prepare_eigenstate_one,
-            correction_fn=_apply_griffiths_niu_corrections,
-            reset_ancilla=True,
-            name="paper_IQPE",
-        )
-    if method == "acp":
-        return _build_iterative_single_ancilla(
-            u,
-            n_bits,
-            1,
-            state_prep=prepare_eigenstate_one,
-            correction_fn=_apply_acp_corrections,
-            reset_ancilla=True,
-            name="paper_ACP",
-        )
-    if method == "lloyd":
-        return _build_lloyd_qpe(
-            u, n_bits, 1, state_prep=prepare_eigenstate_one, semclassical=False
-        )
-    if method == "lloyd_semclassical":
-        return _build_lloyd_qpe(
-            u, n_bits, 1, state_prep=prepare_eigenstate_one, semclassical=True
-        )
-    raise ValueError(f"Unknown method: {method}")
+    """Deprecated alias for :func:`build_lloyd_phase_qpe_circuit`."""
+    return build_lloyd_phase_qpe_circuit(n_bits, method=method, phi=phi)
 
 
 def _build_kitaev_round(u_gate: Gate, n_bits: int, *, k_op: str) -> QuantumCircuit:
