@@ -7,8 +7,6 @@
 
 <p align="center">
   <img src="assets/winner_team.jpg" alt="Team Quantum Joa with the Excellence Award at the 2026 Quantum Information Competition" width="420">
-  &nbsp;&nbsp;
-  <img src="assets/award_certificate.jpg" alt="Excellence Award certificate" width="420">
 </p>
 
 **Team members:** Hyeongmin Lim, Jeongbin Jo, Junghwan Kim, Jaemin Park, Seokwon Choi
