@@ -9,9 +9,17 @@
   <img src="assets/winner_team.jpg" alt="Team Quantum Joa with the Excellence Award at the 2026 Quantum Information Competition" width="420">
 </p>
 
-**Team members:** Hyeongmin Lim, Jeongbin Jo, Junghwan Kim, Jaemin Park, Seokwon Choi
+**Team members:** Hyungmin Lim, Jeongbin Jo, Junghwan Kim, Jaemin Park, Seokwon Choi
 
 📑 Slides: [Presentation_QuantumJoa.pdf](Presentation_QuantumJoa.pdf) · 📄 Problem statement: [2026 양자정보경진대회 지정문제(4) Dynamic circuits.pdf](<2026 양자정보경진대회 지정문제(4) Dynamic circuits.pdf>)
+
+---
+
+## About the Hackathon
+
+The **Korea Quantum Hackathon 2026 (2026 양자정보경진대회)** is a national quantum information competition hosted by the **Ministry of Science and ICT (과학기술정보통신부)** of the Korean government and organized by **Sungkyunkwan University (SKKU, 성균관대학교)** and the **Quantum Information Research Support Center (양자정보연구지원센터)**. It ran for three days, from 29 June to 1 July 2026, with 20 teams (about 86 students) that had passed the preliminary round. Our team worked on **Assigned Problem (4): Dynamic Circuits**.
+
+🔗 Official awards announcement: [2026 양자정보경진대회 수상팀 및 단체사진 안내](https://qhackathon.kr/2026/?p=0401&idx=5550)
 
 ---
 
